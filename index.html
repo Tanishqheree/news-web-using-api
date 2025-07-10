@@ -129,11 +129,11 @@
       const newsContainer = document.getElementById("newsContainer");
 
       if (!location) {
-        newsContainer.innerHTML = "⚠️ Please enter a city, country, or keyword.";
+        newsContainer.innerHTML = " Please enter a city, country, or keyword.";
         return;
       }
 
-      newsContainer.innerHTML = `🔎 Fetching news for <strong>${location}</strong>...`;
+      newsContainer.innerHTML = ` Fetching news for <strong>${location}</strong>...`;
 
       const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(location)}&language=en&apiKey=${apiKey}`;
 
@@ -143,7 +143,7 @@
 
         if (data.status === "ok") {
           if (data.articles.length === 0) {
-            newsContainer.innerHTML = "❌ No news found for this query.";
+            newsContainer.innerHTML = " No news found for this query.";
             return;
           }
 
@@ -154,17 +154,17 @@
               <div class="news-item" style="animation-delay:${delay}ms;">
                 <h3>${article.title}</h3>
                 <p>${article.description || "No description available."}</p>
-                <a href="${article.url}" target="_blank">🔗 Read more</a>
+                <a href="${article.url}" target="_blank"> Read more</a>
               </div>
             `;
             newsContainer.innerHTML += newsHTML;
           });
         } else {
-          newsContainer.innerHTML = "❌ Failed to load news.";
+          newsContainer.innerHTML = " Failed to load news.";
         }
       } catch (error) {
         console.error(error);
-        newsContainer.innerHTML = "⚠️ Network or API error occurred.";
+        newsContainer.innerHTML = "⚠ Network or API error occurred.";
       }
     }
 
