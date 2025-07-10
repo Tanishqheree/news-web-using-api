@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Global News Search</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('OIP (1).webp') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    input, button {
+      padding: 12px 18px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    input {
+      width: 60%;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #newsContainer {
+      margin-top: 20px;
+    }
+
+    .news-item {
+      padding: 20px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      opacity: 0;
+      transform: translateX(-100%);
+      animation: slideIn 0.6s ease forwards;
+      background: #ffffffdd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .news-item h3 {
+      margin: 0 0 10px 0;
+      color: #222;
+    }
+
+    .news-item p {
+      margin: 0 0 10px 0;
+      color: #555;
+    }
+
+    .news-item a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    .news-item a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .form-group {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      input, button {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📰 Global News Search</h1>
+    <div class="form-group">
+      <input type="text" id="locationInput" placeholder="Enter city, country, or topic (e.g. India, London, sports)">
+      <button onclick="getNews()">Search News</button>
+    </div>
+    <div id="newsContainer">Showing top news for: <strong>India</strong></div>
+  </div>
+
+  <script>
+    const apiKey = "13cbd03bc2374bf7a6654070332b786d";
+
+    async function getNews() {
+      const location = document.getElementById("locationInput").value.trim();
+      const newsContainer = document.getElementById("newsContainer");
+
+      if (!location) {
+        newsContainer.innerHTML = "⚠️ Please enter a city, country, or keyword.";
+        return;
+      }
+
+      newsContainer.innerHTML = `🔎 Fetching news for <strong>${location}</strong>...`;
+
+      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(location)}&language=en&apiKey=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === "ok") {
+          if (data.articles.length === 0) {
+            newsContainer.innerHTML = "❌ No news found for this query.";
+            return;
+          }
+
+          newsContainer.innerHTML = `<h2>Top News for: <em>${location}</em></h2>`;
+          data.articles.forEach((article, index) => {
+            const delay = index * 100;
+            const newsHTML = `
+              <div class="news-item" style="animation-delay:${delay}ms;">
+                <h3>${article.title}</h3>
+                <p>${article.description || "No description available."}</p>
+                <a href="${article.url}" target="_blank">🔗 Read more</a>
+              </div>
+            `;
+            newsContainer.innerHTML += newsHTML;
+          });
+        } else {
+          newsContainer.innerHTML = "❌ Failed to load news.";
+        }
+      } catch (error) {
+        console.error(error);
+        newsContainer.innerHTML = "⚠️ Network or API error occurred.";
+      }
+    }
+
+    // Load India news by default on page load
+    window.onload = () => {
+      document.getElementById("locationInput").value = "India";
+      getNews();
+    };
+  </script>
+</body>
+</html>
